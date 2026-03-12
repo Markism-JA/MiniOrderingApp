@@ -153,7 +153,11 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20.0),
           children: [
-            const RecipientDetail(),
+            RecipientDetail(
+              nameController: _nameController,
+              dedicationController: _dedicationController,
+              addressController: _addressController,
+            ),
             const SizedBox(height: 16),
             Text(
               "Select your Cake",
@@ -168,7 +172,9 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
               cakes: cakeList,
               onSelectionChanged: (cake) {
                 print("Selected: ${cake?.name}");
-                selectedCake = cake;
+                setState(() {
+                  _selectedCake = cake;
+                });
               },
             ),
             const SizedBox(height: 24),
