@@ -13,6 +13,7 @@ class Order {
   final DateTime deliveryDay;
   final PaymentOption paymentOption;
   final List<AddOns> addOns;
+  final double total;
 
   const Order({
     required this.id,
@@ -24,5 +25,6 @@ class Order {
     required this.deliveryDay,
     required this.paymentOption,
     required this.addOns,
+    required this.total,
   });
 }
