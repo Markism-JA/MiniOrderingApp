@@ -2,20 +2,37 @@ import 'package:advmobprog_midterms_tp03_amarille/widgets/textbox_widget.dart';
 import 'package:flutter/material.dart';
 
 class RecipientDetail extends StatelessWidget {
-  const RecipientDetail({super.key});
+  final TextEditingController nameController;
+  final TextEditingController dedicationController;
+  final TextEditingController addressController;
+  const RecipientDetail({
+    super.key,
+    required this.nameController,
+    required this.dedicationController,
+    required this.addressController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextBoxWidget(labelText: "Recipient Name", hintText: "Sarah Jenkins"),
+        TextBoxWidget(
+          labelText: "Recipient Name",
+          hintText: "Sarah Jenkins",
+          controller: nameController,
+        ),
         SizedBox(height: 8),
-        TextBoxWidget(labelText: "Dedication", hintText: "Happy Birthday!"),
+        TextBoxWidget(
+          labelText: "Dedication",
+          hintText: "Happy Birthday!",
+          controller: dedicationController,
+        ),
         SizedBox(height: 8),
         TextBoxWidget(
           labelText: "Delivery Address",
           hintText: "123 Streets, City",
+          controller: addressController,
         ),
       ],
     );

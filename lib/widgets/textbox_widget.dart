@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class TextBoxWidget extends StatelessWidget {
   final String labelText;
   final String hintText;
+  final TextEditingController controller;
 
   const TextBoxWidget({
     super.key,
     required this.labelText,
     required this.hintText,
+    required this.controller,
   });
 
   @override
@@ -22,6 +24,7 @@ class TextBoxWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextFormField(
+        controller: controller,
         style: TextStyle(
           color: colorScheme.onSurface,
           fontSize: 14,
