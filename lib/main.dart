@@ -14,7 +14,7 @@ void main() {
 }
 
 class CakeApp extends StatefulWidget {
-  const CakeApp({Key? key}) : super(key: key);
+  const CakeApp({super.key});
 
   @override
   State<CakeApp> createState() => _CakeAppState();
@@ -76,53 +76,60 @@ class OrderFormScreen extends StatefulWidget {
 }
 
 class _OrderFormScreenState extends State<OrderFormScreen> {
+  Cake? _selectedCake;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _dedicationController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  static const List<Cake> cakeList = [
+    Cake(
+      id: "1",
+      name: "Chocolate Fudge",
+      description: "Rich cocoa layers with silky ganache.",
+      imagePath: "assets/choco.png",
+    ),
+    Cake(
+      id: "2",
+      name: "Red Velvet",
+      description: "Crimson sponge and tangy cream cheese.",
+      imagePath: "assets/red_velvet.png",
+    ),
+    Cake(
+      id: "3",
+      name: "Vanilla Bean",
+      description: "Light sponge with aromatic vanilla flecks.",
+      imagePath: "assets/vanilla_bean.png",
+    ),
+    Cake(
+      id: "4",
+      name: "Strawberry",
+      description: "Sweet strawberry sponge with fresh fruit.",
+      imagePath: "assets/strawberry.png",
+    ),
+    Cake(
+      id: "5",
+      name: "Maple Brown Pecan",
+      description: "Toasty butterscotch notes and crunchy pecans.",
+      imagePath: "assets/maple_brown.png",
+    ),
+    Cake(
+      id: "6",
+      name: "Spiced Black Forest",
+      description: "Chai-spiced layers with tart cherries.",
+      imagePath: "assets/spiced_black_forest.png",
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _dedicationController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    Cake? selectedCake;
-
-    static const List<Cake> cakeList = [
-      Cake(
-        id: "1",
-        name: "Chocolate Fudge",
-        description: "Rich cocoa layers with silky ganache.",
-        imagePath: "assets/choco.png",
-      ),
-      Cake(
-        id: "2",
-        name: "Red Velvet",
-        description: "Crimson sponge and tangy cream cheese.",
-        imagePath: "assets/red_velvet.png",
-      ),
-      Cake(
-        id: "3",
-        name: "Vanilla Bean",
-        description: "Light sponge with aromatic vanilla flecks.",
-        imagePath: "assets/vanilla_bean.png",
-      ),
-      Cake(
-        id: "4",
-        name: "Strawberry",
-        description: "Sweet strawberry sponge with fresh fruit.",
-        imagePath: "assets/strawberry.png",
-      ),
-      Cake(
-        id: "5",
-        name: "Maple Brown Pecan",
-        description: "Toasty butterscotch notes and crunchy pecans.",
-        imagePath: "assets/maple_brown.png",
-      ),
-      Cake(
-        id: "6",
-        name: "Spiced Black Forest",
-        description: "Chai-spiced layers with tart cherries.",
-        imagePath: "assets/spiced_black_forest.png",
-      ),
-    ];
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
 
     return Scaffold(
       appBar: AppBar(
