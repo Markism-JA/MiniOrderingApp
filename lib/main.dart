@@ -123,7 +123,13 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 30,
-        title: const Text("Order Your Cake"),
+        title: const Text(
+          "Order Your Cake",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
           IconButton(
             onPressed: widget.onThemeToggle,
