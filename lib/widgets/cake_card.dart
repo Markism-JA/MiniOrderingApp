@@ -19,10 +19,10 @@ class CakeCard extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final dynamicImageHeight = constraints.maxWidth * 0.50;
-
+        final dynamicImageHeight = constraints.maxWidth * 0.55;
         final titleFontSize = (constraints.maxWidth * 0.085).clamp(12.0, 16.0);
         final descFontSize = (titleFontSize * 0.8).clamp(10.0, 13.0);
+        final priceFontSize = (titleFontSize * 0.9).clamp(11.0, 15.0);
 
         return GestureDetector(
           onTap: onTap,
@@ -43,15 +43,19 @@ class CakeCard extends StatelessWidget {
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
+
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 8.0,
+                        padding: const EdgeInsets.fromLTRB(
+                          10.0,
+                          8.0,
+                          10.0,
+                          10.0,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Cake Name
                             Text(
                               cake.name,
                               maxLines: 1,
@@ -63,10 +67,11 @@ class CakeCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 2),
+
                             Expanded(
                               child: Text(
                                 cake.description,
-                                maxLines: constraints.maxHeight < 180 ? 2 : 3,
+                                maxLines: constraints.maxHeight < 200 ? 2 : 3,
                                 overflow: TextOverflow.fade,
                                 style: TextStyle(
                                   color: colorScheme.onSurfaceVariant,
@@ -75,32 +80,45 @@ class CakeCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 10),
-                                height: 20,
-                                width: 20,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isSelected
-                                      ? colorScheme.primary
-                                      : Colors.transparent,
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? colorScheme.primary
-                                        : colorScheme.outline,
-                                    width: 1.5,
+
+                            const SizedBox(height: 4),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "₱${cake.price.toStringAsFixed(0)}",
+                                  style: TextStyle(
+                                    color: colorScheme.primary,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: priceFontSize,
                                   ),
                                 ),
-                                child: isSelected
-                                    ? Icon(
-                                        Icons.check,
-                                        size: 12,
-                                        color: colorScheme.onPrimary,
-                                      )
-                                    : null,
-                              ),
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  height: 20,
+                                  width: 20,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isSelected
+                                        ? colorScheme.primary
+                                        : Colors.transparent,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? colorScheme.primary
+                                          : colorScheme.outline,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: isSelected
+                                      ? Icon(
+                                          Icons.check,
+                                          size: 12,
+                                          color: colorScheme.onPrimary,
+                                        )
+                                      : null,
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -112,14 +130,14 @@ class CakeCard extends StatelessWidget {
 
               IgnorePointer(
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 100),
+                  duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected
                           ? colorScheme.primary
                           : Colors.transparent,
-                      width: 2,
+                      width: 2.5,
                     ),
                   ),
                 ),

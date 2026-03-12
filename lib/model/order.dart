@@ -12,7 +12,7 @@ class Order {
   final CakeSize size;
   final DateTime deliveryDay;
   final PaymentOption paymentOption;
-  final List<AddOns> addOns;
+  final Set<AddOns> addOns;
   final double total;
 
   const Order({

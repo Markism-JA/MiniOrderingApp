@@ -16,37 +16,59 @@ class CakeSizeSelection extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Wrap(
-      spacing: 12.0,
+      spacing: 16.0,
       alignment: WrapAlignment.center,
       children: CakeSize.values.map((size) {
         final bool isSelected = selectedSize == size;
 
         return ChoiceChip(
-          label: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-            child: Text(
-              size.label,
-              style: TextStyle(
-                color: isSelected
-                    ? colorScheme.onPrimary
-                    : colorScheme.onSurfaceVariant,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+          label: Container(
+            constraints: const BoxConstraints(minWidth: 60),
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  size.label,
+                  style: TextStyle(
+                    color: isSelected
+                        ? colorScheme.onPrimary
+                        : colorScheme.onSurface,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  size.relativePriceLabel,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: isSelected
+                        ? FontWeight.w500
+                        : FontWeight.normal,
+                    color: isSelected
+                        ? colorScheme.onPrimary.withValues(alpha: 0.9)
+                        : colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
           ),
           selected: isSelected,
           onSelected: (bool selected) {
-            if (selected) {
-              onSizeChanged(size);
-            }
+            if (selected) onSizeChanged(size);
           },
           selectedColor: colorScheme.primary,
           backgroundColor: colorScheme.surfaceContainerHigh,
-
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
-          side: BorderSide.none,
+          side: BorderSide(
+            color: isSelected ? Colors.transparent : Colors.transparent,
+            width: 1,
+          ),
           showCheckmark: false,
         );
       }).toList(),

@@ -17,10 +17,9 @@ class AddOnsSelection extends StatelessWidget {
 
     return Center(
       child: Wrap(
-        spacing: 10.0,
-        runSpacing: 8.0,
+        spacing: 12.0,
+        runSpacing: 10.0,
         alignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
         children: AddOns.values.map((addon) {
           final bool isSelected = selectedAddOns.contains(addon);
 
@@ -28,29 +27,45 @@ class AddOnsSelection extends StatelessWidget {
             avatar: Icon(
               addon.icon,
               size: 16,
-              color: isSelected
-                  ? colorScheme.onPrimary
-                  : colorScheme.onSurfaceVariant,
+              color: isSelected ? colorScheme.onPrimary : colorScheme.primary,
             ),
-            label: Text(
-              addon.label,
-              style: TextStyle(
-                color: isSelected
-                    ? colorScheme.onPrimary
-                    : colorScheme.onSurface,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                fontSize: 13,
-              ),
+            label: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  addon.label,
+                  style: TextStyle(
+                    color: isSelected
+                        ? colorScheme.onPrimary
+                        : colorScheme.onSurface,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontSize: 13,
+                  ),
+                ),
+                Text(
+                  addon.priceTag,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: isSelected
+                        ? colorScheme.onPrimary.withValues(alpha: 0.8)
+                        : colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
             selected: isSelected,
             onSelected: (_) => onAddOnToggled(addon),
             selectedColor: colorScheme.primary,
             backgroundColor: colorScheme.surfaceContainerHigh,
             showCheckmark: false,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
             ),
-            side: BorderSide.none,
+            side: BorderSide(
+              color: isSelected ? Colors.transparent : Colors.transparent,
+              width: 1,
+            ),
             pressElevation: 0,
           );
         }).toList(),

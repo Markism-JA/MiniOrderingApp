@@ -2,10 +2,12 @@ import 'package:advmobprog_midterms_tp03_amarille/model/add_ons.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/cake.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/cake_size.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/payment_option.dart';
+import 'package:advmobprog_midterms_tp03_amarille/model/order.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/addons_selection.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/cake_group.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/cake_size_selection.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/delivery_day_picker.dart';
+import 'package:advmobprog_midterms_tp03_amarille/widgets/order_confirmation_screen.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/payment_options_selection.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/recipient_detail.dart';
 import 'package:device_preview/device_preview.dart';
@@ -62,12 +64,12 @@ class _CakeAppState extends State<CakeApp> {
           themeMode: _themeMode,
           theme: ThemeData(
             useMaterial3: true,
-            colorScheme: lightDynamic?.harmonized() ?? lightScheme,
+            colorScheme: lightScheme,
             textTheme: GoogleFonts.openSansTextTheme(),
           ),
           darkTheme: ThemeData(
             useMaterial3: true,
-            colorScheme: darkDynamic?.harmonized() ?? darkScheme,
+            colorScheme: darkScheme,
             textTheme: GoogleFonts.openSansTextTheme(
               ThemeData(brightness: Brightness.dark).textTheme,
             ),
@@ -92,7 +94,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   CakeSize _cakeSize = CakeSize.medium;
   DateTime _selectedDeliveryDate = DateTime.now();
   PaymentOption _selectedPayment = PaymentOption.cash;
-  Set<AddOns> _selectedAddOns = {};
+  final Set<AddOns> _selectedAddOns = {};
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dedicationController = TextEditingController();
@@ -104,36 +106,42 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
       name: "Chocolate Fudge",
       description: "Rich cocoa layers with silky ganache.",
       imagePath: "assets/choco.png",
+      price: 950.0,
     ),
     Cake(
       id: "2",
       name: "Red Velvet",
       description: "Crimson sponge and tangy cream cheese.",
       imagePath: "assets/red_velvet.png",
+      price: 1100.0,
     ),
     Cake(
       id: "3",
       name: "Vanilla Bean",
       description: "Light sponge with aromatic vanilla flecks.",
       imagePath: "assets/vanilla_bean.png",
+      price: 850.0,
     ),
     Cake(
       id: "4",
       name: "Strawberry",
       description: "Sweet strawberry sponge with fresh fruit.",
       imagePath: "assets/strawberry.png",
+      price: 1050.0,
     ),
     Cake(
       id: "5",
       name: "Maple Brown Pecan",
       description: "Toasty butterscotch notes and crunchy pecans.",
       imagePath: "assets/maple_brown.png",
+      price: 1200.0,
     ),
     Cake(
       id: "6",
       name: "Spiced Black Forest",
       description: "Chai-spiced layers with tart cherries.",
       imagePath: "assets/spiced_black_forest.png",
+      price: 1150.0,
     ),
   ];
 
@@ -176,6 +184,18 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     );
   }
 
+  double get _currentPrice {
+    if (_selectedCake == null) return 0.0;
+
+    double total = _selectedCake!.price * _cakeSize.priceMultiplier;
+
+    for (var addon in _selectedAddOns) {
+      total += addon.price;
+    }
+
+    return total;
+  }
+
   void _placeOrder() {
     if (_nameController.text.trim().isEmpty || _selectedCake == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -190,24 +210,54 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Order Confirmed! \uD83C\uDF89"),
-        content: Text(
-          "Your ${_cakeSize.label} ${_selectedCake?.name} will be delivered on "
-          "${_selectedDeliveryDate.month}/${_selectedDeliveryDate.day} using ${_selectedPayment.label}.\n\n"
-          "Thank you for your order!",
+    final String generatedId =
+        "ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}";
+
+    final newOrder = Order(
+      id: generatedId,
+      cake: _selectedCake!,
+      size: _cakeSize,
+      addOns: _selectedAddOns,
+      paymentOption: _selectedPayment,
+      total: _currentPrice,
+      recipient: _nameController.text.trim(),
+      deliveryAddress: _addressController.text.trim().isEmpty
+          ? "No address provided"
+          : _addressController.text.trim(),
+      dedication: _dedicationController.text.trim(),
+      deliveryDay: _selectedDeliveryDate,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OrderConfirmationScreen(
+          order: newOrder,
+          onConfirm: () {
+            Navigator.pop(context);
+
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Order Successful!"),
+                content: Text(
+                  "Your ${_cakeSize.label} ${_selectedCake?.name} will be delivered on "
+                  "${_selectedDeliveryDate.month}/${_selectedDeliveryDate.day}.\n\n"
+                  "Thank you for ordering with us!",
+                ),
+                actions: [
+                  FilledButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _resetForm();
+                    },
+                    child: const Text("Done"),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
-        actions: [
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _resetForm();
-            },
-            child: const Text("Awesome"),
-          ),
-        ],
       ),
     );
   }
@@ -230,7 +280,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
         actions: [
           IconButton(
@@ -244,9 +294,16 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
       bottomNavigationBar: isWideScreen
           ? null
           : SafeArea(
-              child: Padding(
+              child: Container(
+                color: colorScheme.surface,
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                child: _buildPlaceOrderButton(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildLiveTotal(colorScheme),
+                    _buildPlaceOrderButton(),
+                  ],
+                ),
               ),
             ),
 
@@ -322,6 +379,8 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                 const SizedBox(height: 40),
 
                 if (isWideScreen) ...[
+                  const Divider(),
+                  _buildLiveTotal(colorScheme),
                   _buildPlaceOrderButton(),
                   const SizedBox(height: 20),
                 ],
@@ -345,6 +404,29 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     );
   }
 
+  Widget _buildLiveTotal(ColorScheme colorScheme) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Estimated Total",
+            style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
+          ),
+          Text(
+            "₱${_currentPrice.toStringAsFixed(0)}",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPlaceOrderButton() {
     return SizedBox(
       height: 56,
@@ -357,7 +439,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
           ),
         ),
         child: const Text(
-          "Place Order",
+          "Review Order",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
