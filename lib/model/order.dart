@@ -1,3 +1,4 @@
+import 'package:advmobprog_midterms_tp03_amarille/model/add_ons.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/cake.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/cake_size.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/payment_option.dart';
@@ -11,7 +12,7 @@ class Order {
   final CakeSize size;
   final DateTime deliveryDay;
   final PaymentOption paymentOption;
-  final List<String> addOns;
+  final List<AddOns> addOns;
 
   const Order({
     required this.id,
