@@ -1,4 +1,4 @@
-import 'package:advmobprog_midterms_tp03_amarille/model/Cake.dart';
+import 'package:advmobprog_midterms_tp03_amarille/model/cake.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/cake_group.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/recipient_detail.dart';
 import 'package:dynamic_color/dynamic_color.dart';

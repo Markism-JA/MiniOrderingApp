@@ -1,4 +1,4 @@
-import 'package:advmobprog_midterms_tp03_amarille/model/Cake.dart';
+import 'package:advmobprog_midterms_tp03_amarille/model/cake.dart';
 import 'package:flutter/material.dart';
 
 class CakeCard extends StatelessWidget {
