@@ -81,7 +81,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     Cake? selectedCake;
 
-    final List<Cake> cakeList = [
+    static const List<Cake> cakeList = [
       Cake(
         id: "1",
         name: "Chocolate Fudge",
@@ -119,6 +119,10 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
         imagePath: "assets/spiced_black_forest.png",
       ),
     ];
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Scaffold(
       appBar: AppBar(
