@@ -177,7 +177,6 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   }
 
   void _placeOrder() {
-    // Basic Validation
     if (_nameController.text.trim().isEmpty || _selectedCake == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -191,7 +190,6 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
       return;
     }
 
-    // Success Dialog
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -204,8 +202,8 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
         actions: [
           FilledButton(
             onPressed: () {
-              Navigator.pop(context); // Close dialog
-              _resetForm(); // Clear form for the next order
+              Navigator.pop(context);
+              _resetForm();
             },
             child: const Text("Awesome"),
           ),
@@ -219,9 +217,14 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = screenWidth > 700;
+    const double maxFormWidth = 650.0;
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 30,
+        centerTitle: isWideScreen,
         title: const Text(
           "Order Your Cake",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -238,102 +241,124 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
         ],
       ),
 
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-          child: SizedBox(
-            height: 56,
-            child: FilledButton(
-              onPressed: _placeOrder,
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+      bottomNavigationBar: isWideScreen
+          ? null
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                child: _buildPlaceOrderButton(),
+              ),
+            ),
+
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: maxFormWidth),
+            child: ListView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 10.0,
+              ),
+              children: [
+                RecipientDetail(
+                  nameController: _nameController,
+                  dedicationController: _dedicationController,
+                  addressController: _addressController,
                 ),
-              ),
-              child: const Text(
-                "Place Order",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+                const SizedBox(height: 24),
+
+                _buildSectionHeader(context, "Select your Cake"),
+                CakeGroup(
+                  cakes: cakeList,
+                  onSelectionChanged: (cake) {
+                    setState(() {
+                      _selectedCake = cake;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                _buildSectionHeader(context, "Size"),
+                Center(
+                  child: CakeSizeSelection(
+                    selectedSize: _cakeSize,
+                    onSizeChanged: (newSize) {
+                      setState(() {
+                        _cakeSize = newSize;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                _buildSectionHeader(context, "Delivery Day"),
+                DeliveryDayPicker(
+                  selectedDate: _selectedDeliveryDate,
+                  onDateSelected: (newDate) {
+                    setState(() {
+                      _selectedDeliveryDate = newDate;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                _buildSectionHeader(context, "Payment Options"),
+                PaymentSelection(
+                  selectedOption: _selectedPayment,
+                  onOptionChanged: (newOption) {
+                    setState(() {
+                      _selectedPayment = newOption;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                _buildSectionHeader(context, "Add-ons"),
+                AddOnsSelection(
+                  selectedAddOns: _selectedAddOns,
+                  onAddOnToggled: _toggleAddOn,
+                ),
+
+                const SizedBox(height: 40),
+
+                if (isWideScreen) ...[
+                  _buildPlaceOrderButton(),
+                  const SizedBox(height: 20),
+                ],
+
+                Center(
+                  child: TextButton.icon(
+                    onPressed: _resetForm,
+                    icon: const Icon(Icons.refresh, size: 20),
+                    label: const Text("Reset Form"),
+                    style: TextButton.styleFrom(
+                      foregroundColor: colorScheme.error,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
             ),
           ),
         ),
       ),
+    );
+  }
 
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          children: [
-            RecipientDetail(
-              nameController: _nameController,
-              dedicationController: _dedicationController,
-              addressController: _addressController,
-            ),
-            const SizedBox(height: 24),
-
-            _buildSectionHeader(context, "Select your Cake"),
-            CakeGroup(
-              cakes: cakeList,
-              onSelectionChanged: (cake) {
-                setState(() {
-                  _selectedCake = cake;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-
-            _buildSectionHeader(context, "Size"),
-            Center(
-              child: CakeSizeSelection(
-                selectedSize: _cakeSize,
-                onSizeChanged: (newSize) {
-                  setState(() {
-                    _cakeSize = newSize;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            _buildSectionHeader(context, "Delivery Day"),
-            DeliveryDayPicker(
-              selectedDate: _selectedDeliveryDate,
-              onDateSelected: (newDate) {
-                setState(() {
-                  _selectedDeliveryDate = newDate;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-
-            _buildSectionHeader(context, "Payment Options"),
-            PaymentSelection(
-              selectedOption: _selectedPayment,
-              onOptionChanged: (newOption) {
-                setState(() {
-                  _selectedPayment = newOption;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-
-            _buildSectionHeader(context, "Add-ons"),
-            AddOnsSelection(
-              selectedAddOns: _selectedAddOns,
-              onAddOnToggled: _toggleAddOn,
-            ),
-
-            const SizedBox(height: 40),
-
-            Center(
-              child: TextButton.icon(
-                onPressed: _resetForm,
-                icon: const Icon(Icons.refresh, size: 20),
-                label: const Text("Reset Form"),
-                style: TextButton.styleFrom(foregroundColor: colorScheme.error),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
+  Widget _buildPlaceOrderButton() {
+    return SizedBox(
+      height: 56,
+      width: double.infinity,
+      child: FilledButton(
+        onPressed: _placeOrder,
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: const Text(
+          "Place Order",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );
