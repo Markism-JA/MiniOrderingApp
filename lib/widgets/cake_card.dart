@@ -3,106 +3,131 @@ import 'package:flutter/material.dart';
 
 class CakeCard extends StatelessWidget {
   final Cake cake;
-  final String? selectedCakeId;
-  final ValueChanged<String?> onSelected;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   const CakeCard({
     super.key,
     required this.cake,
-    required this.selectedCakeId,
-    required this.onSelected,
+    required this.isSelected,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isSelected = selectedCakeId == cake.id;
 
-    return GestureDetector(
-      onTap: () => onSelected(cake.id),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Fixed height image
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
-              child: Image.asset(
-                cake.imagePath,
-                height: 110, // Slightly reduced to save space
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final dynamicImageHeight = constraints.maxWidth * 0.50;
 
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
+        final titleFontSize = (constraints.maxWidth * 0.085).clamp(12.0, 16.0);
+        final descFontSize = (titleFontSize * 0.8).clamp(10.0, 13.0);
+
+        return GestureDetector(
+          onTap: onTap,
+          child: Stack(
+            children: [
+              Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      cake.name,
-                      maxLines: 1, // Keep name to one line to save space
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
+                    Image.asset(
+                      cake.imagePath,
+                      height: dynamicImageHeight,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      cake.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                      ),
-                    ),
-
-                    // Pushes the radio button to the absolute bottom
-                    const Spacer(),
-
-                    Center(
-                      child: Container(
-                        height: 24,
-                        width: 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isSelected
-                                ? colorScheme.primary
-                                : colorScheme.outline,
-                            width: 2,
-                          ),
-                          color: isSelected
-                              ? colorScheme.primary
-                              : Colors.transparent,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 8.0,
                         ),
-                        child: isSelected
-                            ? Icon(
-                                Icons.check,
-                                size: 16,
-                                color: colorScheme.onPrimary,
-                              )
-                            : null,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              cake.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.bold,
+                                fontSize: titleFontSize,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Expanded(
+                              child: Text(
+                                cake.description,
+                                maxLines: constraints.maxHeight < 180 ? 2 : 3,
+                                overflow: TextOverflow.fade,
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: descFontSize,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 10),
+                                height: 20,
+                                width: 20,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isSelected
+                                      ? colorScheme.primary
+                                      : Colors.transparent,
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? colorScheme.primary
+                                        : colorScheme.outline,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: isSelected
+                                    ? Icon(
+                                        Icons.check,
+                                        size: 12,
+                                        color: colorScheme.onPrimary,
+                                      )
+                                    : null,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+
+              IgnorePointer(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 100),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected
+                          ? colorScheme.primary
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

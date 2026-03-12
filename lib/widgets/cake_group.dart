@@ -19,28 +19,32 @@ class CakeGroup extends StatefulWidget {
 class _CakeGroupState extends State<CakeGroup> {
   String? _selectedCakeId;
 
+  double _calculateAspectRatio(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    if (width < 360) return 0.70;
+    if (width < 400) return 0.80;
+    return 0.90;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.85,
+        childAspectRatio: _calculateAspectRatio(context),
       ),
       itemCount: widget.cakes.length,
       itemBuilder: (context, index) {
         final cake = widget.cakes[index];
-
         return CakeCard(
           cake: cake,
-          selectedCakeId: _selectedCakeId,
-          onSelected: (id) {
-            setState(() {
-              _selectedCakeId = id;
-            });
+          isSelected: _selectedCakeId == cake.id,
+          onTap: () {
+            setState(() => _selectedCakeId = cake.id);
             widget.onSelectionChanged(cake);
           },
         );
