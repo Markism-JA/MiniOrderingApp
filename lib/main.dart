@@ -2,6 +2,7 @@ import 'package:advmobprog_midterms_tp03_amarille/model/cake.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/cake_size.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/cake_group.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/cake_size_selection.dart';
+import 'package:advmobprog_midterms_tp03_amarille/widgets/delivery_day_picker.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/recipient_detail.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -80,7 +81,7 @@ class OrderFormScreen extends StatefulWidget {
 class _OrderFormScreenState extends State<OrderFormScreen> {
   Cake? _selectedCake;
   CakeSize _cakeSize = CakeSize.medium;
-  DateTime? _deliveryDate;
+  DateTime _selectedDeliveryDate = DateTime.now();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dedicationController = TextEditingController();
@@ -201,6 +202,24 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                   });
                 },
               ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Delivery Day",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            DeliveryDayPicker(
+              selectedDate: _selectedDeliveryDate,
+              onDateSelected: (newDate) {
+                setState(() {
+                  _selectedDeliveryDate = newDate;
+                });
+              },
             ),
           ],
         ),
