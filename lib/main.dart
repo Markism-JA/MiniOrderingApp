@@ -1,6 +1,8 @@
+import 'package:advmobprog_midterms_tp03_amarille/model/add_ons.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/cake.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/cake_size.dart';
 import 'package:advmobprog_midterms_tp03_amarille/model/payment_option.dart';
+import 'package:advmobprog_midterms_tp03_amarille/widgets/addons_selection.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/cake_group.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/cake_size_selection.dart';
 import 'package:advmobprog_midterms_tp03_amarille/widgets/delivery_day_picker.dart';
@@ -14,7 +16,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => CakeApp()),
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => const CakeApp(),
+    ),
   );
 }
 
@@ -63,7 +68,9 @@ class _CakeAppState extends State<CakeApp> {
           darkTheme: ThemeData(
             useMaterial3: true,
             colorScheme: darkDynamic?.harmonized() ?? darkScheme,
-            textTheme: GoogleFonts.openSansTextTheme(),
+            textTheme: GoogleFonts.openSansTextTheme(
+              ThemeData(brightness: Brightness.dark).textTheme,
+            ),
           ),
           home: OrderFormScreen(onThemeToggle: toggleTheme),
         );
@@ -85,10 +92,12 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   CakeSize _cakeSize = CakeSize.medium;
   DateTime _selectedDeliveryDate = DateTime.now();
   PaymentOption _selectedPayment = PaymentOption.cash;
+  Set<AddOns> _selectedAddOns = {};
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dedicationController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+
   static const List<Cake> cakeList = [
     Cake(
       id: "1",
@@ -136,9 +145,79 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     super.dispose();
   }
 
+  void _toggleAddOn(AddOns addon) {
+    setState(() {
+      if (_selectedAddOns.contains(addon)) {
+        _selectedAddOns.remove(addon);
+      } else {
+        _selectedAddOns.add(addon);
+      }
+    });
+  }
+
+  void _resetForm() {
+    setState(() {
+      _nameController.clear();
+      _dedicationController.clear();
+      _addressController.clear();
+      _selectedCake = null;
+      _cakeSize = CakeSize.medium;
+      _selectedDeliveryDate = DateTime.now();
+      _selectedPayment = PaymentOption.cash;
+      _selectedAddOns.clear();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("Order form has been reset."),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  void _placeOrder() {
+    // Basic Validation
+    if (_nameController.text.trim().isEmpty || _selectedCake == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Please select a cake and enter the recipient's name.",
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    // Success Dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Order Confirmed! \uD83C\uDF89"),
+        content: Text(
+          "Your ${_cakeSize.label} ${_selectedCake?.name} will be delivered on "
+          "${_selectedDeliveryDate.month}/${_selectedDeliveryDate.day} using ${_selectedPayment.label}.\n\n"
+          "Thank you for your order!",
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              _resetForm(); // Clear form for the next order
+            },
+            child: const Text("Awesome"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -155,47 +234,54 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
             onPressed: widget.onThemeToggle,
             icon: Icon(isDark ? Icons.cake : Icons.cake_outlined),
           ),
-          const SizedBox(width: 30),
+          const SizedBox(width: 20),
         ],
       ),
+
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+          child: SizedBox(
+            height: 56,
+            child: FilledButton(
+              onPressed: _placeOrder,
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: const Text(
+                "Place Order",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ),
+      ),
+
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           children: [
             RecipientDetail(
               nameController: _nameController,
               dedicationController: _dedicationController,
               addressController: _addressController,
             ),
-            const SizedBox(height: 16),
-            Text(
-              "Select your Cake",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+
+            _buildSectionHeader(context, "Select your Cake"),
             CakeGroup(
               cakes: cakeList,
               onSelectionChanged: (cake) {
-                print("Selected: ${cake?.name}");
                 setState(() {
                   _selectedCake = cake;
                 });
               },
             ),
-            const SizedBox(height: 16),
-            Text(
-              "Size",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+
+            _buildSectionHeader(context, "Size"),
             Center(
               child: CakeSizeSelection(
                 selectedSize: _cakeSize,
@@ -206,16 +292,9 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              "Delivery Day",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
+
+            _buildSectionHeader(context, "Delivery Day"),
             DeliveryDayPicker(
               selectedDate: _selectedDeliveryDate,
               onDateSelected: (newDate) {
@@ -224,16 +303,9 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                 });
               },
             ),
-            const SizedBox(height: 12),
-            Text(
-              "Payment Options",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
+
+            _buildSectionHeader(context, "Payment Options"),
             PaymentSelection(
               selectedOption: _selectedPayment,
               onOptionChanged: (newOption) {
@@ -242,7 +314,40 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                 });
               },
             ),
+            const SizedBox(height: 24),
+
+            _buildSectionHeader(context, "Add-ons"),
+            AddOnsSelection(
+              selectedAddOns: _selectedAddOns,
+              onAddOnToggled: _toggleAddOn,
+            ),
+
+            const SizedBox(height: 40),
+
+            Center(
+              child: TextButton.icon(
+                onPressed: _resetForm,
+                icon: const Icon(Icons.refresh, size: 20),
+                label: const Text("Reset Form"),
+                style: TextButton.styleFrom(foregroundColor: colorScheme.error),
+              ),
+            ),
+            const SizedBox(height: 20),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
