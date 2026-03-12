@@ -11,7 +11,6 @@ class DeliveryDayPicker extends StatelessWidget {
     required this.onDateSelected,
   });
 
-  // Generates 7 days starting from today
   List<DateTime> _generateDays() {
     return List.generate(
       7,
@@ -19,7 +18,6 @@ class DeliveryDayPicker extends StatelessWidget {
     );
   }
 
-  // Logic to handle Today, Tomorrow, and standard days
   String _getFormattedLabel(DateTime date) {
     final now = DateTime.now();
     final tomorrow = now.add(const Duration(days: 1));
@@ -30,7 +28,6 @@ class DeliveryDayPicker extends StatelessWidget {
       return "Tomorrow, ${DateFormat('MMMM d').format(date)}";
     }
 
-    // Formats as "Wednesday, July 16"
     return DateFormat('EEEE, MMMM d').format(date);
   }
 
@@ -39,7 +36,6 @@ class DeliveryDayPicker extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final days = _generateDays();
 
-    // Ensure the selected date is actually in our list of generated days
     final currentValue = days.firstWhere(
       (d) => DateUtils.isSameDay(d, selectedDate),
       orElse: () => days.first,
@@ -52,7 +48,6 @@ class DeliveryDayPicker extends StatelessWidget {
         color: colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
       ),
-      // Theme override to kill the default rectangular gray highlights
       child: Theme(
         data: Theme.of(context).copyWith(
           focusColor: Colors.transparent,
@@ -71,7 +66,6 @@ class DeliveryDayPicker extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             dropdownColor: colorScheme.surfaceContainerHighest,
 
-            // 1. CLOSED MENU BUTTON (Normal text, no dot)
             selectedItemBuilder: (BuildContext context) {
               return days.map<Widget>((DateTime date) {
                 return Align(
@@ -156,7 +150,6 @@ class _HoverableDropdownItemState extends State<_HoverableDropdownItem> {
               ),
             ),
             const SizedBox(width: 10),
-            // The Label
             Text(
               widget.label,
               style: TextStyle(
