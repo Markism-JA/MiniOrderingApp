@@ -19,23 +19,16 @@ class CakeGroup extends StatefulWidget {
 class _CakeGroupState extends State<CakeGroup> {
   String? _selectedCakeId;
 
-  double _calculateAspectRatio(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width < 360) return 0.70;
-    if (width < 400) return 0.80;
-    return 0.90;
-  }
-
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 280,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: _calculateAspectRatio(context),
+        childAspectRatio: 0.85,
       ),
       itemCount: widget.cakes.length,
       itemBuilder: (context, index) {
