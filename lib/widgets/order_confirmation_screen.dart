@@ -313,9 +313,7 @@ class OrderConfirmationScreen extends StatelessWidget {
 
   Widget _priceRow(String label, String value, ColorScheme colorScheme) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 6.0,
-      ), // slightly more breathing room
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
