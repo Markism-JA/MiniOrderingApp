@@ -99,7 +99,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dedicationController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-
+  final TextEditingController _deliveryInstructionController = TextEditingController();
   static const List<Cake> cakeList = [
     Cake(
       id: "1",
@@ -226,6 +226,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
           : _addressController.text.trim(),
       dedication: _dedicationController.text.trim(),
       deliveryDay: _selectedDeliveryDate,
+      deliveryInstruction: _deliveryInstructionController.text.trim(),
     );
 
     Navigator.push(
@@ -321,6 +322,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                   nameController: _nameController,
                   dedicationController: _dedicationController,
                   addressController: _addressController,
+                  deliveryInstructionController: _deliveryInstructionController,
                 ),
                 const SizedBox(height: 24),
 

@@ -8,6 +8,7 @@ class Order {
   final String recipient;
   final String dedication;
   final String deliveryAddress;
+  final String deliveryInstruction;
   final Cake cake;
   final CakeSize size;
   final DateTime deliveryDay;
@@ -20,6 +21,7 @@ class Order {
     required this.recipient,
     required this.dedication,
     required this.deliveryAddress,
+    required this.deliveryInstruction,
     required this.cake,
     required this.size,
     required this.deliveryDay,

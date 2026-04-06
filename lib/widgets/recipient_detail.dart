@@ -5,11 +5,13 @@ class RecipientDetail extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController dedicationController;
   final TextEditingController addressController;
+  final TextEditingController deliveryInstructionController;
   const RecipientDetail({
     super.key,
     required this.nameController,
     required this.dedicationController,
     required this.addressController,
+    required this.deliveryInstructionController
   });
 
   @override
@@ -33,6 +35,12 @@ class RecipientDetail extends StatelessWidget {
           labelText: "Delivery Address",
           hintText: "123 Streets, City",
           controller: addressController,
+        ),
+        SizedBox(height: 8),
+        TextBoxWidget(
+          labelText: "Delivery Instruction",
+          hintText: "Leave at front door",
+          controller: deliveryInstructionController,
         ),
       ],
     );

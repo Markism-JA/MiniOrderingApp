@@ -115,6 +115,12 @@ class OrderConfirmationScreen extends StatelessWidget {
               "Delivery Date",
               _formatDate(order.deliveryDay),
               colorScheme,
+            ),const Divider(height: 24),
+            _infoRow(
+              Icons.info_outline,
+              "Delivery Instruction",
+              order.deliveryInstruction.isEmpty ? "No instructions" : order.deliveryInstruction,
+              colorScheme,
             ),
 
             if (order.dedication.isNotEmpty) ...[
